@@ -1,0 +1,78 @@
+syntax = "proto3";
+option java_package="net.youssfi.grpc.stubs";
+service BankService {
+  // Unary bModel
+  rpc convert(ConvertCurrencyRequest) returns (ConvertCurrencyResponse);
+  rpc getAccount(GetAccountRequest) returns (GetAccountResponse);
+  rpc getListAccounts(GetListAccountsRequest) returns (GetListAccountResponse);
+  // Server Streaming Model
+  rpc getStreamOfAccountTransactions(GetStreamOfAccountTransactionsRequest) returns (stream AccountTransaction);
+  // Client Streaming Model
+  rpc submitStreamOfTransactions(stream AccountTransaction) returns (PerformStreamOfTransactionResponse);
+  // Bidirectional Streaming Model
+  rpc executeStreamOfTransaction(stream AccountTransaction) returns (stream AccountTransaction);
+}
+message ConvertCurrencyRequest{
+  double amount=1;
+  string currencyFrom=2;
+  string currencyTo=3;
+}
+message ConvertCurrencyResponse{
+  double amount=1;
+  string currencyFrom=2;
+  string currencyTo=3;
+  double result=4;
+}
+message GetAccountRequest{
+  string accountId=1;
+}
+message GetAccountResponse{
+ Account account=1;
+}
+message GetListAccountsRequest{
+}
+message GetListAccountResponse {
+  repeated Account accounts=1;
+}
+message GetStreamOfAccountTransactionsRequest{
+   string accountId=1;
+}
+message PerformStreamOfTransactionResponse{
+  int64 numberOfPerformedTransactions=1;
+  double totalAmountOfPerformedTransactions=2;
+}
+message AccountTransaction {
+  string transactionId=1;
+  string accountId=2;
+  int64 transactionDate=3;
+  double amount=4;
+  TransactionType type=5;
+  TransactionStatus status=6;
+}
+message Account {
+  string accountId=1;
+  double balance=2;
+  int64 createdAt=3;
+  AccountStatus status=4;
+  AccountType type=5;
+  string currency=6;
+}
+enum AccountStatus {
+  UNKNOWN=0;
+  ACTIVATED=1;
+  SUSPENDED=2;
+  CLOSED=4;
+}
+enum AccountType {
+  CURRENT_ACCOUNT=0;
+  SAVING_ACCOUNT=1;
+}
+enum TransactionType {
+  DEBIT=0;
+  CREDIT=1;
+}
+enum TransactionStatus {
+  PENDING=0;
+  EXECUTED=1;
+  REJECTED=2;
+}
